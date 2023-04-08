@@ -2,7 +2,7 @@
 import User from '../models/User.js';
 
 import jwt from "jsonwebtoken";
-const secretKey="secretkey";
+const secretKey="agfaegfkjawfl";
 export const getUsers = async (req,res) =>{
         const users = await User.find({})
         res.send(users);
@@ -14,14 +14,14 @@ export const createUser = async (req,res) =>{
          const email = req.body.email;
          const password = req.body.password;
     
-     const emp= new User({
+   const newUser =   User.create({
                name:name,
             //    id:uuidv4(), //afafaf-azfkaghke-afbekajga-agega
                email:email,
                password:password,
         })
     try{
-          const newUser=await emp.save()
+         
           res.status(201).json(newUser)
     }
     catch(err){
@@ -77,6 +77,6 @@ res
 }
 
 const createJWT = (user)=>{
-const t= jwt.sign(user,'secretKey',{expiresIn:'1d'})
+const t= jwt.sign(user,secretKey,{expiresIn:'1d', algorithm: 'HS256', allowInsecureKeySizes: true })
 return t;
 }

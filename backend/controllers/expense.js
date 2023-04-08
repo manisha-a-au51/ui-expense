@@ -1,10 +1,20 @@
 import jwt from "jsonwebtoken";
 import User from '../models/User.js';
 import mongodb from "mongodb"
-
+const secretKey="agfaegfkjawfl";
 const findUser = async(authorization) => {
-    const decoded = JSON.parse(Buffer.from(authorization.split('.')[1], 'base64').toString())
-    // console.log(decoded)
+    console.log(authorization,":auth")
+    // let decoded = JSON.parse(Buffer.from(authorization.split('.')[1], 'base64').toString())
+    let  decoded={id: ''} ;
+    try {
+        console.log(decoded, "in--------****")
+        
+          decoded  =  jwt.verify(authorization, secretKey, { algorithm: 'HS256'})
+    } catch (error) {
+        console.log(error,"0-----------------------------0000000000000000")
+        return false
+    }
+    console.log(decoded, "*******")
     var id = new mongodb.ObjectId(decoded.id);
     const user = await User.findById({ '_id': id }).exec();
     return user
@@ -13,7 +23,7 @@ const findUser = async(authorization) => {
 export const getExpenses = async (req,res) =>{
     const token = req.headers.authorization
     let user = await findUser(token)
-    res.status(201).json(user.expenses)
+    res.status(201).json(user?.expenses)
 }
 
 export const addExpenses = async (req,res) =>{
@@ -38,8 +48,7 @@ export const analyticsData = async (req,res) =>{
     let Entertainment=0
     let educational=0
     let personal=0
-    console.log(user.expenses,"--------")
-    user.expenses.map(item => {
+    user?.expenses.map(item => {
         if(item.typeOfExpense === "Rent") {
             rent = rent + parseInt(item.expense)
         }
@@ -97,7 +106,7 @@ export const filteredAnalyticsData = async (req,res) =>{
     let educational=0
     let personal=0
     // console.log(req.query.month, user.expenses)
-    user.expenses.map(item => {
+    user?.expenses.map(item => {
         if(item.typeOfExpense === "Rent" && req.query.month === item.month) {
             rent = rent + parseInt(item.expense)
         }

@@ -59,7 +59,7 @@
       const password = document.getElementById('password').value;
       
       const body = JSON.stringify({email, password})
-      const data = await callApi(`${baseUrl}/login`, 'POST', body)
+      const data = await callApi(`${baseUrl}/users/login`, 'POST', body)
       if(data)
      
       document.getElementById('email').value=''
@@ -68,6 +68,7 @@
       return;
   }
   async function  callApi(apiUrl,method,body){
+    console.log(baseUrl)
   try{
   
   // Define the API request options
