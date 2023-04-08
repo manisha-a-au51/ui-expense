@@ -1,6 +1,10 @@
 <!doctype html>
 <html lang="en">
-  <head>  
+  <head> 
+        <script>
+              var baseUrl = '<%- utils.baseUrl %>'    
+        </script>
+         
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap demo</title>
@@ -55,7 +59,7 @@
       const password = document.getElementById('password').value;
       
       const body = JSON.stringify({email, password})
-      const data = await callApi('http://localhost:5001/users/login', 'POST', body)
+      const data = await callApi(`${baseUrl}/login`, 'POST', body)
       if(data)
      
       document.getElementById('email').value=''

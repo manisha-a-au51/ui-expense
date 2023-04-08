@@ -39,7 +39,7 @@
       if(isMatch==true){
         console.log(name,email,password)
       const body = JSON.stringify({name, email, password})
-      const data = await callApi('http://localhost:5001/users', 'POST', body)
+      const data = await callApi(`${baseUrl}/users`, 'POST', body)
       if(data)
       document.getElementById('name').value=''
       document.getElementById('email').value=''

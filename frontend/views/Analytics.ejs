@@ -1,5 +1,11 @@
+
 <!doctype html>
 <html lang="en">
+    <head>
+        <script>
+            var baseUrl = '<%- utils.baseUrl %>'    
+      </script>
+    </head>
     <head>  
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -74,6 +80,7 @@
                 }
             }
             async function callApi(apiUrl, reqType, params) {
+                console.log(baseUrl)
                 let token = localStorage.getItem("token")
                 axios.get(apiUrl, 
                 { headers: {                             
@@ -89,11 +96,11 @@
                 });
             }
             async function getData(){
-                const data = await callApi('http://localhost:5001/users/analytics', "GET")
+                const data = await callApi(`${baseUrl}/users/analytics`, "GET")
             }
             async function getFilteredData(){
                 let filterMonth = document.getElementById("filterMonth").value
-                const data = await callApi(`http://localhost:5001/users/filteredAnalytics?month=${filterMonth}`, "GET")
+                const data = await callApi(`${baseUrl}/users/filteredAnalytics?month=${filterMonth}`, "GET")
             }
             function chart1(data) {
                 let filterMonth = document.getElementById("filterMonth").value

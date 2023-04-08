@@ -9,7 +9,7 @@ const secretKey="secret";
 const app= express();
 const PORT=process.env.PORT || 80;
 
-app.use(cors())
+app.use(cors({origin: "*"}))
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
