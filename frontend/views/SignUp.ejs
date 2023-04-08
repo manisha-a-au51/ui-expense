@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>  
+    <script>
+      var baseUrl = '<%- utils.baseUrl %>'    
+</script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bootstrap demo</title>
@@ -54,6 +57,7 @@
   }
   
 async function  callApi(apiUrl,method,body){
+  console.log(baseUrl)
   try{
   
   // Define the API request options

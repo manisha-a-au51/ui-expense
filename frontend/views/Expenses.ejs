@@ -104,6 +104,7 @@
                             }
                         }
                         async function callApi(apiUrl, reqType, body) {
+                            console.log(baseUrl)
                             let token = localStorage.getItem("token")
                             if(reqType === "GET") {
                                 axios.get(apiUrl, { headers: {                             

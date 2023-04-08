@@ -7,9 +7,9 @@ import  cors from 'cors';
 import jwt from "jsonwebtoken";
 const secretKey="secret";
 const app= express();
-const PORT=process.env.PORT || 80;
+const PORT=process.env.PORT || 4000;
 
-app.use(cors({origin: "https://ui-expense-production.up.railway.app"))
+app.use(cors())
 app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -21,37 +21,21 @@ app.use(bodyParser.json());
 app.use("/users",usersRoute)
 
 app.listen(PORT,()=>console.log(`server running on port:http://localhost:${PORT}`));
-app.post("/Login",(req,res)=>{
-    
-    
-    const email = req.body.email;
-    const password = req.body.password;
 
-const emp1= new User({
+app.post("/signup",verifyToken,(req,res)=>{
+    jwt.verify(req.token,secretKey,(err,authData)=>{
+        if(err){
+            res.send({result: "invalid token"})
+        }else{
+            res.json({
+                message: "profile accessed",
+                authData
+            })
+        }
         
-          email:email,
-          password:password
-   })
-    jwt.sign({emp1},secretKey,{expiresIn:'1d'},(err,token)=>{
-        res.json({
-            token
-        })
-      })
-  })
-  app.post("/signup",verifyToken,(req,res)=>{
-      jwt.verify(req.token,secretKey,(err,authData)=>{
-          if(err){
-              res.send({result: "invalid token"})
-          }else{
-              res.json({
-                  message: "profile accessed",
-                  authData
-              })
-          }
-          
-      })
-  
-  })
+    })
+
+})
   function verifyToken(req,res,next){
       const bearerHeader = req.headers['authorization'];
       if(typeof bearerHeader !== 'undefined'){
