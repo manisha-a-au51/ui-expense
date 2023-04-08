@@ -1,0 +1,19 @@
+.table-container {
+    width: 800px;
+    text-align: left;
+    color: #FFFFFF ;
+    margin: 20px auto;
+}
+
+.header-row {
+    border: 2px solid gray;
+}
+
+table, th, td {
+    padding: 10px;
+    border: 1px solid gray;
+    border-collapse: collapse;
+}
+.text{
+    font-size: 24px;
+}

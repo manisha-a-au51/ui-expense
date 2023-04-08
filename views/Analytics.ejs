@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+    <head>  
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Expense Tracker</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    </head>
+    <body onload="getData(); verifyUser()">
+        <script>
+            function verifyUser() {
+                if(!localStorage.getItem("token")) {
+                    window.location.href="/login"
+                }
+            }
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+        <section style="background-color: #000000; /* For browsers that do not support gradients */
+        height: 100vh;">
+            <nav style="position: relative; background-color: black; position: fixed; display: flex; height: 50px; justify-content: flex-start; align-items: flex-start; width: 100%;">
+                <a style="color: #FFFFFF; width: 10%; height: 100%; justify-content: center; align-items: center; display: flex; text-decoration: none;" href="/about">About</a>
+                <a style="color: #FFFFFF; width: 10%; height: 100%; justify-content: center; align-items: center; display: flex; text-decoration: none;" href="/home">Home</a>
+                <div style="color: #FFFFFF; width: 10%; height: 100%; justify-content: center; align-items: center; display: flex; text-decoration: none;">Analytics</div>
+                <a style="position: absolute; right: 0px; color: #E9E8E8; width: 10%; height: 100%; justify-content: center; align-items: center; display: flex; text-decoration: none;" href="/login">Logout</a>
+            </nav>
+            <h1 style="margin: 0px auto 40px; padding-top: 40px; width: 300px; text-align: center; color: #E9E8E8;">Analytics</h1>
+            <div style="margin: 20px auto; display: flex; justify-content: center; align-items: center;">
+                <select onchange="getFilteredData()" id="filterMonth" name="filterMonth" style="width: 300px; height: 50px; border-radius: 3px; margin: 5px 0px 10px; padding: 10px; outline: none; border: 1px solid gray;">
+                    <option value="" disabled selected>Select month to filter</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>    
+            </div>
+            <div id="charts" style="display: flex; justify-content: center; align-items: center;">
+                <canvas id="chart1" style="width:100%;max-width:600px"></canvas>
+                <canvas id="chart2" style="width:100%;max-width:600px"></canvas>    
+            </div>
+            <div id="errors" style="color: #FFFFFF; display: flex; justify-content: center; align-items: center;">
+            </div>
+        </section>
+        <script>
+            function handleResponse(response) {
+                let data = response.data
+                if(data.length > 0) {
+                    var div = document.getElementById("charts");
+                    let row = `
+                        <canvas id="chart1" style="width:100%;max-width:600px"></canvas>
+                        <canvas id="chart2" style="width:100%;max-width:600px"></canvas>    
+                    `
+                    div.innerHTML = row
+                    var error = document.getElementById("errors");
+                    error.innerHTML = ""
+                    chart1(data)
+                    chart2(data)
+                }
+                else {
+                    var chart = document.getElementById("charts");
+                    chart.innerHTML = ""
+                    var error = document.getElementById("errors");
+                    error.innerHTML = "No data available for the selected Month"
+                }
+            }
+            async function callApi(apiUrl, reqType, params) {
+                let token = localStorage.getItem("token")
+                axios.get(apiUrl, 
+                { headers: {                             
+                        'Content-Type': 'application/json',
+                        Authorization: token 
+                    } 
+                })
+                .then(response => {
+                    handleResponse(response)
+                })
+                .catch((error) => {
+                    console.log('error ' + error); 
+                });
+            }
+            async function getData(){
+                const data = await callApi('http://localhost:5001/users/analytics', "GET")
+            }
+            async function getFilteredData(){
+                let filterMonth = document.getElementById("filterMonth").value
+                const data = await callApi(`http://localhost:5001/users/filteredAnalytics?month=${filterMonth}`, "GET")
+            }
+            function chart1(data) {
+                let filterMonth = document.getElementById("filterMonth").value
+                let filteredMonth = `Month - ${filterMonth}`
+                if(filterMonth === "") {
+                    filteredMonth = "Year"
+                }
+                var xValues = ["Rent", "Utilities", "Groceries", "EMIs","Medical","Insurance","Entertainment","Personal","Education"];
+                var yValues = data;
+                var barColors = [
+                "#B2A4FF",
+                "#19376D",
+                "#576CBC",
+                "#A5D7E8",
+                '#FFB4B4',
+                '#FFDEB4',
+                '#B8621B',
+                '#F5C6EC',
+                '#7AA874'
+
+                ];
+                
+                new Chart("chart1", {
+                type: "pie",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                    backgroundColor: barColors,
+                    data: yValues
+                    }]
+                },
+                options: {
+                    title: {
+                    display: true,
+                    text: `Expenses for the ${filteredMonth}`
+                    }
+                }
+                });
+            }
+            function chart2(data) {
+                let filterMonth = document.getElementById("filterMonth").value
+                let filteredMonth = `Month - ${filterMonth}`
+                if(filterMonth === "") {
+                    filteredMonth = "Year"
+                }
+                var xValues = ["Rent", "Utilities", "Groceries", "EMIs","Medical","Insurance","Entertainment","Personal","Education"];
+                var yValues = data;
+                var barColors = [
+                "#B2A4FF",
+                "#19376D",
+                "#576CBC",
+                "#A5D7E8",
+                '#FFB4B4',
+                '#FFDEB4',
+                '#B8621B',
+                '#F5C6EC',
+                '#7AA874'
+                ];
+                
+                new Chart("chart2", {
+                type: "bar",
+                data: {
+                    labels: xValues,
+                    datasets: [{
+                    backgroundColor: barColors,
+                    data: yValues
+                    }]
+                },
+                options: {
+                    legend: {display: false},
+                    title: {
+                    display: true,
+                    text: `Expenses for the ${filteredMonth}`
+                    }
+                }
+                });
+            }
+        </script>
+    </body>
+</html>
