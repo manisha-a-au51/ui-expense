@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
     <head>  
+        <script>
+            var baseUrl = '<%- utils.baseUrl %>'    
+      </script>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Expense Tracker</title>
@@ -130,7 +133,7 @@
                             }
                         }
                         async function getData(){
-                            const data = await callApi('http://localhost:5001/users/expenses', "GET")
+                            const data = await callApi(`${baseUrl}/users/expenses`, "GET")
                         }
                         async function addExpense() {
                             let typeOfExpense = document.getElementById("typeOfExpense").value
@@ -148,7 +151,7 @@
                                 const scrollingElement = (document.scrollingElement || document.body);
                                 scrollingElement.scrollTop = scrollingElement.scrollHeight;
                                 typeOfExpense.value = ""
-                                callApi('http://localhost:5001/users/add-expenses', "POST", newData)
+                                callApi(`${baseUrl}/users/add-expenses`, "POST", newData)
                             }
                         }
                         function filterByMonth() {
